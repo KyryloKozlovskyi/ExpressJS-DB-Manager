@@ -2,18 +2,30 @@
 var express = require("express");
 var app = express();
 
-// Set view engine
+// Import view engine
 let ejs = require("ejs");
 app.set("view engine", "ejs");
 
-// Home Page Route
+// Import the mysqlDAO
+const mysqlDAO = require("./backend/mysqlDAO.js");
+
+// GET / route to render the home page
 app.get("/", (req, res) => {
-  res.render("home"); // Render the Home Page
+  res.render("home");
 });
 
-// Students Page Route
+// GET /students route to render the students page
 app.get("/students", (req, res) => {
-  res.render("students"); // Render the Students Page
+  mysqlDAO
+    .findAll() // Use the DAO function to fetch students
+    .then((students) => {
+      res.render("students", { students }); // Render the student data with ejs
+    })
+    // Catch any errors and log them
+    .catch((error) => {
+      console.error("Error fetching students:", error.message);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // Grades Page Route

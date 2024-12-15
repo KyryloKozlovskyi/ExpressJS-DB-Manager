@@ -2,18 +2,41 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,
-                                   initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Students</title>
   </head>
   <body>
     <h1>Students</h1>
     <nav>
-      <a href="/">Add Student</a><br />
+      <!-- Add student link -->
+      <a href="/students/add">Add Student</a><br />
+      <!-- Home link -->
       <a href="/">Home</a><br />
     </nav>
+    <!-- Table -->
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Loop through students -->
+        <% students.forEach(student => { %>
+        <tr>
+          <td><%= student.sid %></td>
+          <td><%= student.name %></td>
+          <td><%= student.age %></td>
+          <td>
+            <!-- Update link -->
+            <a href="/students/edit/<%= student.sid %>">Update</a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
   </body>
 </html>
