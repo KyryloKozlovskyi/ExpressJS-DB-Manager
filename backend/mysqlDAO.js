@@ -32,5 +32,17 @@ var findAll = function () {
   return query(sql);
 };
 
-// Export the DAO functions
-module.exports = { findAll };
+// Fetch a student by ID
+var findById = function (sid) {
+  const sql = "SELECT * FROM student WHERE sid = ?";
+  return query(sql, [sid]);
+};
+
+// Update a student by ID
+var updateStudent = function (sid, name, age) {
+  const sql = "UPDATE student SET name = ?, age = ? WHERE sid = ?";
+  return query(sql, [name, age, sid]);
+};
+
+// Export the functions
+module.exports = { findAll, findById, updateStudent };
