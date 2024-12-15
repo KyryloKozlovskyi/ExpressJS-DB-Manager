@@ -6,13 +6,28 @@ var app = express();
 let ejs = require("ejs");
 app.set("view engine", "ejs");
 
-// Port listener
-app.listen(3004, () => {
-  console.log("Application listening on port 3004");
+// Home Page Route
+app.get("/", (req, res) => {
+  res.render("home"); // Render the Home Page
 });
 
-// Home
-app.get("/", (req, res) => {
-  console.log("GET");
-  res.render("index");
+// Students Page Route
+app.get("/students", (req, res) => {
+  res.render("students"); // Render the Students Page
 });
+
+// Grades Page Route
+app.get("/grades", (req, res) => {
+  res.render("grades"); // Render the Grades Page
+});
+
+// Lecturers Page Route
+app.get("/lecturers", (req, res) => {
+  res.render("lecturers"); // Render the Lecturers Page
+});
+
+// Start the server
+const PORT = 3004;
+app.listen(PORT, () =>
+  console.log(`Server is running on http://localhost:${PORT}`)
+);
