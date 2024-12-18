@@ -144,9 +144,41 @@ app.post(
   }
 );
 
-// Grades Page Route
+// GET /grades - Render the Grades Page
 app.get("/grades", (req, res) => {
-  res.render("grades"); // Render the Grades Page
+  mysqlDAO
+    .findAllGrades()
+    .then((grades) => {
+      // Group data by student name
+      const groupedGrades = grades.reduce((acc, item) => {
+        if (!acc[item.studentName]) {
+          acc[item.studentName] = [];
+        }
+        if (item.moduleName) {
+          acc[item.studentName].push({
+            moduleName: item.moduleName,
+            grade: item.studentGrade,
+          });
+        }
+        return acc;
+      }, {});
+
+      // Sort students and their grades
+      const sortedGroupedGrades = Object.keys(groupedGrades)
+        .sort()
+        .reduce((acc, studentName) => {
+          acc[studentName] = groupedGrades[studentName].sort(
+            (a, b) => a.grade - b.grade
+          );
+          return acc;
+        }, {});
+
+      res.render("grades", { groupedGrades: sortedGroupedGrades });
+    })
+    .catch((error) => {
+      console.error("Error fetching grades:", error.message);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // Lecturers Page Route

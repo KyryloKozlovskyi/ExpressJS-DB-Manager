@@ -50,5 +50,26 @@ var addStudent = function (sid, name, age) {
   return query(sql, [sid, name, age]);
 };
 
+// Fetch students, their modules, and grades
+var findAllGrades = function () {
+  const sql = `
+    SELECT 
+      student.name AS studentName,
+      module.name AS moduleName,
+      grade.grade AS studentGrade
+    FROM student
+    LEFT JOIN grade ON student.sid = grade.sid
+    LEFT JOIN module ON grade.mid = module.mid
+    ORDER BY student.name ASC, grade.grade ASC;
+  `;
+  return query(sql);
+};
+
 // Export the functions
-module.exports = { findAll, findById, updateStudent, addStudent };
+module.exports = {
+  findAll,
+  findById,
+  updateStudent,
+  addStudent,
+  findAllGrades,
+};

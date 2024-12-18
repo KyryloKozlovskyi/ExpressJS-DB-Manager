@@ -2,15 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,
-                                   initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Grades</title>
   </head>
   <body>
-    <h1>Grades</h1>
-    <nav><a href="/">Home</a><br /></nav>
+    <!-- Display the grades in a table -->
+    <h1><strong>Grades</strong></h1>
+    <a href="/">Home</a>
+    <table border="1">
+      <tr>
+        <th>Student</th>
+        <th>Module</th>
+        <th>Grade</th>
+        <!-- Loop through the groupedGrades object and display the student name, module name, and grade -->
+      </tr>
+      <% Object.keys(groupedGrades).forEach(studentName => { const grades =
+      groupedGrades[studentName]; if (grades.length === 0) { %>
+      <tr>
+        <td><%= studentName %></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <% } else { grades.forEach(grade => { %>
+      <tr>
+        <td><%= studentName %></td>
+        <td><%= grade.moduleName || "" %></td>
+        <td><%= grade.grade || "" %></td>
+      </tr>
+      <% }); } }); %>
+    </table>
   </body>
 </html>
