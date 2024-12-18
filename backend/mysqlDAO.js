@@ -44,5 +44,11 @@ var updateStudent = function (sid, name, age) {
   return query(sql, [name, age, sid]);
 };
 
+// Add a new student
+var addStudent = function (sid, name, age) {
+  const sql = "INSERT INTO student (sid, name, age) VALUES (?, ?, ?)";
+  return query(sql, [sid, name, age]);
+};
+
 // Export the functions
-module.exports = { findAll, findById, updateStudent };
+module.exports = { findAll, findById, updateStudent, addStudent };

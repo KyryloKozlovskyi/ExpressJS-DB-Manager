@@ -87,6 +87,63 @@ app.post(
   }
 );
 
+// GET /students/add - Render the Add Student Page
+app.get("/students/add", (req, res) => {
+  res.render("addStudent", { student: {}, errors: [] });
+});
+
+// POST /students/add - Add a New Student to the Database
+app.post(
+  "/students/add",
+  [
+    // Validation rules
+    body("sid")
+      .isLength({ min: 4, max: 4 })
+      .withMessage("Student ID must be 4 characters long"),
+    body("name")
+      .isLength({ min: 2 })
+      .withMessage("Name must be at least 2 characters"),
+    body("age").isInt({ min: 18 }).withMessage("Age must be 18 or older"),
+  ],
+  (req, res) => {
+    const { sid, name, age } = req.body;
+
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render("addStudent", {
+        student: { sid, name, age },
+        errors: errors.array(),
+      });
+    }
+
+    // Add the new student to the database
+    mysqlDAO
+      .findById(sid) // Check if the Student ID already exists
+      .then((existingStudent) => {
+        if (existingStudent.length > 0) {
+          return res.render("addStudent", {
+            student: { sid, name, age },
+            errors: [{ msg: "Student with this ID already exists" }],
+          });
+        }
+
+        // Insert the new student
+        return mysqlDAO
+          .addStudent(sid, name, age)
+          .then(() => res.redirect("/students")) // Redirect to Students Page on success
+          .catch((error) => {
+            console.error("Error adding student:", error.message);
+            res.status(500).send("Internal Server Error");
+          });
+      })
+      .catch((error) => {
+        console.error("Error checking student ID:", error.message);
+        res.status(500).send("Internal Server Error");
+      });
+  }
+);
+
 // Grades Page Route
 app.get("/grades", (req, res) => {
   res.render("grades"); // Render the Grades Page
