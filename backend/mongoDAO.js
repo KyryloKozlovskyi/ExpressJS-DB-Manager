@@ -42,5 +42,19 @@ var deleteLecturer = function (id) {
   });
 };
 
+// Function to add a new lecturer
+var addLecturer = function (lecturer) {
+  return new Promise((resolve, reject) => {
+    coll
+      .insertOne(lecturer)
+      .then(() => {
+        resolve();
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
 // Export the functions
-module.exports = { findAllLecturers, deleteLecturer };
+module.exports = { findAllLecturers, deleteLecturer, addLecturer };

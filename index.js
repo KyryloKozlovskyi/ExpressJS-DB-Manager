@@ -242,6 +242,52 @@ app.get("/lecturers/delete/:lid", (req, res) => {
     });
 });
 
+// GET /lecturers/add - Render the Add Lecturer Page
+app.get("/lecturers/add", (req, res) => {
+  res.render("addLecturer", { lecturer: {}, errors: [] });
+});
+
+// POST /lecturers/add - Add a New Lecturer
+app.post(
+  "/lecturers/add",
+  [
+    // Validate inputs _id, name, and did using express-validator
+    body("_id")
+      .isLength({ min: 4, max: 4 })
+      .withMessage("Lecturer ID must be exactly 4 characters"),
+    body("name")
+      .isLength({ min: 2 })
+      .withMessage("Name must be at least 2 characters"),
+    body("did")
+      .isLength({ min: 3, max: 3 })
+      .withMessage("Department ID must be exactly 3 characters"),
+  ],
+  (req, res) => {
+    const { _id, name, did } = req.body;
+
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render("addLecturer", {
+        lecturer: { _id, name, did },
+        errors: errors.array(),
+      });
+    }
+
+    // Add the new lecturer to the database
+    mongoDAO
+      .addLecturer({ _id, name, did })
+      .then(() => res.redirect("/lecturers")) // Redirect to the lecturers page on success
+      .catch((error) => {
+        console.error("Error adding lecturer:", error.message);
+        res.render("addLecturer", {
+          lecturer: { _id, name, did },
+          errors: [{ msg: "Error adding lecturer to the database" }],
+        });
+      });
+  }
+);
+
 // Start the server
 const PORT = 3004;
 app.listen(PORT, () =>

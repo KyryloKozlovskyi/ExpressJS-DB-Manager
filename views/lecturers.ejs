@@ -6,11 +6,11 @@
     <title>Lecturers</title>
   </head>
   <body>
-    <!-- Home Link -->
-    <a href="/">Home</a>
     <!-- If there is an error (assigned module), display the error message -->
     <% if (typeof error !== 'undefined') { %>
     <h1>Error</h1>
+    <!-- Home Link -->
+    <a href="/">Home</a>
     <h2>
       Error Message: Cannot delete lecturer <%= error %>. He/She has associated
       modules.
@@ -18,6 +18,9 @@
     <!-- If there's no error, display the lecturers in a table -->
     <% } else { %>
     <h1>Lecturers</h1>
+    <!-- Home and addLecturer Links -->
+    <a href="/lecturers/add">Add Lecturer</a><br />
+    <a href="/">Home</a>
     <table border="1">
       <tr>
         <th>Lecturer ID</th>
