@@ -65,7 +65,7 @@ var findAllGrades = function () {
   return query(sql);
 };
 
-// Check if a lecturer teaches any modules
+// Check if a lecturer teaches any modules by lecturer ID
 var lecturerTeachesModules = function (lid) {
   return new Promise((resolve, reject) => {
     pool.query(

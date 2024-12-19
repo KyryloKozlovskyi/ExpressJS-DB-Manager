@@ -1,3 +1,4 @@
+// Initialize MongoDB
 const MongoClient = require("mongodb").MongoClient;
 let db, coll;
 
@@ -41,4 +42,5 @@ var deleteLecturer = function (id) {
   });
 };
 
+// Export the functions
 module.exports = { findAllLecturers, deleteLecturer };

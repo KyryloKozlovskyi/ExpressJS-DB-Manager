@@ -6,16 +6,17 @@
     <title>Grades</title>
   </head>
   <body>
-    <!-- Display the grades in a table -->
-    <h1><strong>Grades</strong></h1>
+    <h1>Grades</h1>
+    <!-- Home Link -->
     <a href="/">Home</a>
+    <!-- Display grades in a table -->
     <table border="1">
       <tr>
         <th>Student</th>
         <th>Module</th>
         <th>Grade</th>
-        <!-- Loop through the groupedGrades object and display the student name, module name, and grade -->
       </tr>
+      <!-- Loop through the groupedGrades object to display the grades -->
       <% Object.keys(groupedGrades).forEach(studentName => { const grades =
       groupedGrades[studentName]; if (grades.length === 0) { %>
       <tr>
@@ -23,13 +24,14 @@
         <td></td>
         <td></td>
       </tr>
-      <% } else { grades.forEach(grade => { %>
+      <!-- If there are no grades for a student, display an empty row -->
+      <% } else { %> <% grades.forEach(grade => { %>
       <tr>
         <td><%= studentName %></td>
         <td><%= grade.moduleName || "" %></td>
         <td><%= grade.grade || "" %></td>
       </tr>
-      <% }); } }); %>
+      <% }); %> <% } }); %>
     </table>
   </body>
 </html>

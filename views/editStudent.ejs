@@ -6,6 +6,7 @@
     <title>Update Student</title>
   </head>
   <body>
+    <!-- Home Link -->
     <a href="/">Home</a>
     <h1>Update Student</h1>
     <!-- Display Validation Errors -->
@@ -18,6 +19,7 @@
     <% } %>
     <!-- Update Student Form -->
     <form action="/students/edit/<%= student.sid %>" method="POST">
+      <!-- Student ID -->
       <label for="sid">Student ID:</label>
       <input
         type="text"
@@ -44,7 +46,7 @@
         value="<%= student.age %>"
         required
       /><br />
-      <!-- Button -->
+      <!-- Add Button -->
       <button type="submit">Add</button>
     </form>
   </body>

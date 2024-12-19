@@ -8,12 +8,12 @@
   <body>
     <h1>Students</h1>
     <nav>
-      <!-- Add student link -->
+      <!-- Student link -->
       <a href="/students/add">Add Student</a><br />
       <!-- Home link -->
       <a href="/">Home</a><br />
     </nav>
-    <!-- Table -->
+    <!-- Table to display students -->
     <table border="1">
       <thead>
         <tr>
@@ -24,7 +24,7 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Loop through students -->
+        <!-- Loop through students and display student details -->
         <% students.forEach(student => { %>
         <tr>
           <td><%= student.sid %></td>

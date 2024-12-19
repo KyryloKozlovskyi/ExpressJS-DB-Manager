@@ -6,13 +6,16 @@
     <title>Lecturers</title>
   </head>
   <body>
+    <!-- Home Link -->
     <a href="/">Home</a>
+    <!-- If there is an error (assigned module), display the error message -->
     <% if (typeof error !== 'undefined') { %>
     <h1>Error</h1>
     <h2>
-      <strong>Error Message:</strong> Cannot delete lecturer <%= error %>.
-      He/She has associated modules.
+      Error Message: Cannot delete lecturer <%= error %>. He/She has associated
+      modules.
     </h2>
+    <!-- If there's no error, display the lecturers in a table -->
     <% } else { %>
     <h1>Lecturers</h1>
     <table border="1">
@@ -22,11 +25,13 @@
         <th>Department ID</th>
         <th>Action</th>
       </tr>
+      <!-- Loop through the lecturers array to display the lecturers -->
       <% lecturers.forEach(lecturer => { %>
       <tr>
         <td><%= lecturer._id %></td>
         <td><%= lecturer.name %></td>
         <td><%= lecturer.did %></td>
+        <!-- Delete link for each lecturer -->
         <td>
           <a href="/lecturers/delete/<%= lecturer._id %>">Delete</a>
         </td>

@@ -1,7 +1,9 @@
 // Import necessary modules
 var express = require("express");
 var app = express();
-const { body, validationResult } = require("express-validator"); // For validation
+
+// Import the express-validator module
+const { body, validationResult } = require("express-validator");
 
 // Middleware for parsing form data
 app.use(express.urlencoded({ extended: true }));
@@ -21,10 +23,10 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
-// GET /students route to render the students page
+// GET /students route
 app.get("/students", (req, res) => {
   mysqlDAO
-    .findAll() // Use the DAO function to fetch students
+    .findAll() // Use the DAO function to fetch all students
     .then((students) => {
       res.render("students", { students }); // Render the student data with ejs
     })
@@ -35,7 +37,7 @@ app.get("/students", (req, res) => {
     });
 });
 
-// GET /students/edit/:sid to render the Edit Student Page
+// GET /students/edit/:sid to edit a student
 app.get("/students/edit/:sid", (req, res) => {
   const sid = req.params.sid;
   mysqlDAO
@@ -144,6 +146,7 @@ app.post(
             res.status(500).send("Internal Server Error");
           });
       })
+      // Catch any errors and log them
       .catch((error) => {
         console.error("Error checking student ID:", error.message);
         res.status(500).send("Internal Server Error");
@@ -158,9 +161,11 @@ app.get("/grades", (req, res) => {
     .then((grades) => {
       // Group data by student name
       const groupedGrades = grades.reduce((acc, item) => {
+        // If the student name does not exist, create an empty array
         if (!acc[item.studentName]) {
           acc[item.studentName] = [];
         }
+        // If the module name exists, push the module name and grade to the student
         if (item.moduleName) {
           acc[item.studentName].push({
             moduleName: item.moduleName,
@@ -171,6 +176,7 @@ app.get("/grades", (req, res) => {
       }, {});
       // Sort students and their grades
       const sortedGroupedGrades = Object.keys(groupedGrades)
+        // Sort the student names
         .sort()
         .reduce((acc, studentName) => {
           acc[studentName] = groupedGrades[studentName].sort(
@@ -178,9 +184,10 @@ app.get("/grades", (req, res) => {
           );
           return acc;
         }, {});
-
+      // Render the Grades Page with the grouped and sorted grades
       res.render("grades", { groupedGrades: sortedGroupedGrades });
     })
+    // Catch any errors and log them
     .catch((error) => {
       console.error("Error fetching grades:", error.message);
       res.status(500).send("Internal Server Error");
@@ -193,9 +200,14 @@ app.get("/lecturers", (req, res) => {
     .findAllLecturers()
     .then((lecturers) => {
       // Sort lecturers by ID
-      lecturers.sort((a, b) => (a._id > b._id ? 1 : -1));
+      lecturers.sort((a, b) => {
+        if (a._id > b._id) return 1;
+        if (a._id < b._id) return -1;
+        return 0;
+      });
       res.render("lecturers", { lecturers });
     })
+    // Catch any errors and log them
     .catch((error) => {
       console.error("Error fetching lecturers:", error.message);
       res.status(500).send("Internal Server Error");
@@ -223,6 +235,7 @@ app.get("/lecturers/delete/:lid", (req, res) => {
         });
       }
     })
+    // Catch any errors and log them
     .catch((error) => {
       console.error("Error deleting lecturer:", error.message);
       res.status(500).send("Internal Server Error");
