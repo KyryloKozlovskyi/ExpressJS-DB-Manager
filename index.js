@@ -13,6 +13,9 @@ app.set("view engine", "ejs");
 // Import the mysqlDAO
 const mysqlDAO = require("./backend/mysqlDAO.js");
 
+//
+const mongoDAO = require("./backend/mongoDAO.js");
+
 // GET / route to render the home page
 app.get("/", (req, res) => {
   res.render("home");
@@ -181,9 +184,19 @@ app.get("/grades", (req, res) => {
     });
 });
 
-// Lecturers Page Route
+// GET /lecturers - Render the Lecturers Page
 app.get("/lecturers", (req, res) => {
-  res.render("lecturers"); // Render the Lecturers Page
+  mongoDAO
+    .findAllLecturers()
+    .then((lecturers) => {
+      // Sort lecturers by ID
+      lecturers.sort((a, b) => (a._id > b._id ? 1 : -1));
+      res.render("lecturers", { lecturers });
+    })
+    .catch((error) => {
+      console.error("Error fetching lecturers:", error.message);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // Start the server
