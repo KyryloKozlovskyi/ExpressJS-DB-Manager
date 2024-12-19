@@ -65,6 +65,22 @@ var findAllGrades = function () {
   return query(sql);
 };
 
+// Check if a lecturer teaches any modules
+var lecturerTeachesModules = function (lid) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM module WHERE lecturer = ?",
+      [lid],
+      (error, results) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(results.length > 0);
+      }
+    );
+  });
+};
+
 // Export the functions
 module.exports = {
   findAll,
@@ -72,4 +88,5 @@ module.exports = {
   updateStudent,
   addStudent,
   findAllGrades,
+  lecturerTeachesModules,
 };

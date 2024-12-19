@@ -6,8 +6,15 @@
     <title>Lecturers</title>
   </head>
   <body>
-    <h1><strong>Lecturers</strong></h1>
     <a href="/">Home</a>
+    <% if (typeof error !== 'undefined') { %>
+    <h1>Error</h1>
+    <h2>
+      <strong>Error Message:</strong> Cannot delete lecturer <%= error %>.
+      He/She has associated modules.
+    </h2>
+    <% } else { %>
+    <h1>Lecturers</h1>
     <table border="1">
       <tr>
         <th>Lecturer ID</th>
@@ -26,5 +33,6 @@
       </tr>
       <% }) %>
     </table>
+    <% } %>
   </body>
 </html>

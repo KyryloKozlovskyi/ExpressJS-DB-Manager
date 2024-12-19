@@ -13,7 +13,7 @@ app.set("view engine", "ejs");
 // Import the mysqlDAO
 const mysqlDAO = require("./backend/mysqlDAO.js");
 
-//
+// Import the mongoDAO
 const mongoDAO = require("./backend/mongoDAO.js");
 
 // GET / route to render the home page
@@ -35,15 +35,17 @@ app.get("/students", (req, res) => {
     });
 });
 
-// GET /students/edit/:sid - Render the Edit Student Page
+// GET /students/edit/:sid to render the Edit Student Page
 app.get("/students/edit/:sid", (req, res) => {
   const sid = req.params.sid;
   mysqlDAO
     .findById(sid) // Use the DAO function to fetch student by ID
     .then((student) => {
+      // If student not found, return 404
       if (student.length === 0) {
         return res.status(404).send("Student not found");
       }
+      // Render the Edit Student Page with the student data
       res.render("editStudent", { student: student[0], errors: [] });
     })
     // Catch any errors and log them
@@ -53,9 +55,10 @@ app.get("/students/edit/:sid", (req, res) => {
     });
 });
 
-// POST /students/edit/:sid - Update Student in Database
+// POST /students/edit/:sid to update the student in the database
 app.post(
   "/students/edit/:sid",
+  // Validation rules for the input fields using express-validator
   [
     body("name")
       .isLength({ min: 2 })
@@ -64,25 +67,26 @@ app.post(
       .isInt({ min: 18 })
       .withMessage("Student Age should be at least 18"),
   ],
+  // Function to handle the POST request
   (req, res) => {
     const sid = req.params.sid;
     const { name, age } = req.body;
-
     // Validate input
     const errors = validationResult(req);
+    // If there are validation errors, render the Edit Student Page with the errors
     if (!errors.isEmpty()) {
       return res.render("editStudent", {
         student: { sid, name, age },
         errors: errors.array(),
       });
     }
-
     // Update the student in the database
     mysqlDAO
       .updateStudent(sid, name, age)
       .then(() => {
         res.redirect("/students"); // Redirect to Students Page on success
       })
+      // Catch any errors and log them
       .catch((error) => {
         console.error("Error updating student:", error.message);
         res.status(500).send("Internal Server Error");
@@ -90,16 +94,16 @@ app.post(
   }
 );
 
-// GET /students/add - Render the Add Student Page
+// GET /students/add to render the Add Student Page
 app.get("/students/add", (req, res) => {
   res.render("addStudent", { student: {}, errors: [] });
 });
 
-// POST /students/add - Add a New Student to the Database
+// POST /students/add to add a new student to the database
 app.post(
   "/students/add",
   [
-    // Validation rules
+    // Validation rules for the input fields using express-validator
     body("sid")
       .isLength({ min: 4, max: 4 })
       .withMessage("Student ID must be 4 characters long"),
@@ -108,29 +112,29 @@ app.post(
       .withMessage("Name must be at least 2 characters"),
     body("age").isInt({ min: 18 }).withMessage("Age must be 18 or older"),
   ],
+  // Function to handle the POST request
   (req, res) => {
     const { sid, name, age } = req.body;
-
     // Check for validation errors
     const errors = validationResult(req);
+    // If there are validation errors, render the Add Student Page with the errors
     if (!errors.isEmpty()) {
       return res.render("addStudent", {
         student: { sid, name, age },
         errors: errors.array(),
       });
     }
-
     // Add the new student to the database
     mysqlDAO
       .findById(sid) // Check if the Student ID already exists
       .then((existingStudent) => {
         if (existingStudent.length > 0) {
+          // If the Student ID already exists, return an error message
           return res.render("addStudent", {
             student: { sid, name, age },
             errors: [{ msg: "Student with this ID already exists" }],
           });
         }
-
         // Insert the new student
         return mysqlDAO
           .addStudent(sid, name, age)
@@ -165,7 +169,6 @@ app.get("/grades", (req, res) => {
         }
         return acc;
       }, {});
-
       // Sort students and their grades
       const sortedGroupedGrades = Object.keys(groupedGrades)
         .sort()
@@ -195,6 +198,33 @@ app.get("/lecturers", (req, res) => {
     })
     .catch((error) => {
       console.error("Error fetching lecturers:", error.message);
+      res.status(500).send("Internal Server Error");
+    });
+});
+
+// GET /lecturers/delete/:lid - Delete a Lecturer
+app.get("/lecturers/delete/:lid", (req, res) => {
+  const lid = req.params.lid;
+  mysqlDAO
+    .lecturerTeachesModules(lid)
+    .then((teachesModules) => {
+      if (teachesModules) {
+        // If the lecturer teaches any modules, return an error message
+        return mongoDAO.findAllLecturers().then((lecturers) => {
+          res.render("lecturers", {
+            lecturers,
+            error: lid,
+          });
+        });
+      } else {
+        // If the lecturer does not teach any modules, delete the lecturer
+        return mongoDAO.deleteLecturer(lid).then(() => {
+          res.redirect("/lecturers");
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error deleting lecturer:", error.message);
       res.status(500).send("Internal Server Error");
     });
 });
